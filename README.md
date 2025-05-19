@@ -1,4 +1,13 @@
-# ALX LISTING APP
+# ALX LISTING APP  
+
+**Description**  
+ALX Listing App project is a cloned version of AirBnB.  
+
+**Folder Structure and Reusability**  
+    * Components: This is where reusable components like Button.tsx and Card.tsx are saved.  
+    * Interfaces:  
+    * Constants:  
+    * public/assets: This is where all the images and related assets for the Listing App are saved.
 
 
 
