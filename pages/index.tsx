@@ -1,115 +1,155 @@
+import React from "react";
 import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+import { PROPERTYLISTINGSAMPLE } from "@/constants/index";
+import Card from "@/components/common/Card";
+import { FilterSection, MobileFilterSection } from "@/components/common/Pill";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const Home: React.FC = () => {
+  // Filter and sort state
+  const [activeFilter, setActiveFilter] = React.useState("All");
+  const [selectedSort, setSelectedSort] = React.useState("price-desc");
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  // Filter properties based on active filter
+  const filteredProperties = React.useMemo(() => {
+    if (activeFilter === "All") {
+      return PROPERTYLISTINGSAMPLE;
+    }
+    return PROPERTYLISTINGSAMPLE.filter((property) =>
+      property.category.includes(activeFilter)
+    );
+  }, [activeFilter]);
 
-export default function Home() {
+  // Sort properties based on selected sort option
+  const sortedProperties = React.useMemo(() => {
+    const properties = [...filteredProperties];
+
+    switch (selectedSort) {
+      case "price-asc":
+        return properties.sort((a, b) => {
+          const priceA = a.discount
+            ? a.price - (a.price * parseInt(a.discount)) / 100
+            : a.price;
+          const priceB = b.discount
+            ? b.price - (b.price * parseInt(b.discount)) / 100
+            : b.price;
+          return priceA - priceB;
+        });
+      case "price-desc":
+        return properties.sort((a, b) => {
+          const priceA = a.discount
+            ? a.price - (a.price * parseInt(a.discount)) / 100
+            : a.price;
+          const priceB = b.discount
+            ? b.price - (b.price * parseInt(b.discount)) / 100
+            : b.price;
+          return priceB - priceA;
+        });
+      case "rating-desc":
+        return properties.sort((a, b) => b.rating - a.rating);
+      case "rating-asc":
+        return properties.sort((a, b) => a.rating - b.rating);
+      default:
+        return properties;
+    }
+  }, [filteredProperties, selectedSort]);
+
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              pages/index.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <div className="min-h-screen">
+      {/* Mobile Filter Section - Above Hero */}
+      <MobileFilterSection
+        activeFilter={activeFilter}
+        setActiveFilter={setActiveFilter}
+        selectedSort={selectedSort}
+        setSelectedSort={setSelectedSort}
+      />
+
+      {/* Hero Section */}
+      <section className="relative w-full h-[296px] sm:h-[421px] lg:h-[481px] flex items-center justify-center overflow-hidden bg-gray-50">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0 mx-[21px] sm:mx-[40px] lg:mx-[60px] rounded-[11px] sm:rounded-[27px] overflow-hidden">
+          {/* mobile background */}
+          <div className="block sm:hidden">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+              src="/assets/images/hero_section_image/Image 1 mobile.png"
+              alt="Beautiful lakeside cabin with mountains"
+              fill
+              className="object-cover object-center"
+              priority
+              sizes="100vw"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
+          {/* Tablet and desktop view background */}
+          <div className="hidden sm:block">
+            <Image
+              src="/assets/images/hero_section_image/Image 1.png"
+              alt="Beautiful lakeside cabin with mountains"
+              fill
+              className="object-cover object-center"
+              priority
+              sizes="100vw"
+            />
+          </div>
+          {/* Dark overlay for better text readability */}
+          <div className="absolute inset-0 bg-black/30"></div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Hero Content */}
+        <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+          {/* Main Heading */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
+            Find your favorite
+            <br />
+            place here!
+          </h1>
+
+          {/* Subheading */}
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium opacity-90 max-w-2xl mx-auto leading-relaxed">
+            The best prices for over 2 million properties worldwide
+          </p>
+        </div>
+      </section>
+
+      <FilterSection
+        activeFilter={activeFilter}
+        setActiveFilter={setActiveFilter}
+        selectedSort={selectedSort}
+        setSelectedSort={setSelectedSort}
+      />
+
+      <section className="py-12 sm:py-16 lg:py-20 bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Property Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            {sortedProperties.map((property, index) => (
+              <Card key={index} property={property} />
+            ))}
+          </div>
+
+          {/* No results message */}
+          {sortedProperties.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">
+                No properties found for the selected filter.
+              </p>
+              <button
+                onClick={() => setActiveFilter("All")}
+                className="mt-4 text-teal-600 hover:text-teal-700 font-medium"
+              >
+                Clear filters
+              </button>
+            </div>
+          )}
+
+          {/* Load More Button */}
+          <div className="text-center mt-12">
+            <button className="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg">
+              Show more
+            </button>
+          </div>
+        </div>
+      </section>
     </div>
   );
-}
+};
+
+export default Home;
